@@ -93,7 +93,7 @@ public final class UsbGadgetAidl implements UsbGadgetHal {
 
     static boolean isServicePresent(IndentingPrintWriter pw) {
         try {
-            return ServiceManager.isDeclared(USB_GADGET_AIDL_SERVICE);
+            return ServiceManager.checkService(USB_GADGET_AIDL_SERVICE) != null;
         } catch (NoSuchElementException e) {
             logAndPrintException(pw, "connectToProxy: usb gadget Aidl hal service not found.", e);
         }
@@ -249,4 +249,3 @@ public final class UsbGadgetAidl implements UsbGadgetHal {
         }
     }
 }
-
