@@ -2809,6 +2809,7 @@ public class TelephonyRegistry extends ITelephonyRegistry.Stub {
             }
             handleRemoveListLocked();
         }
+        broadcastRadioPowerStateChanged(state, phoneId, subId);
     }
 
     @Override
@@ -4104,6 +4105,8 @@ public class TelephonyRegistry extends ITelephonyRegistry.Stub {
      */
     private static final String ACTION_ANY_DATA_CONNECTION_STATE_CHANGED =
             "android.intent.action.ANY_DATA_STATE";
+    private static final String ACTION_RADIO_POWER_STATE_CHANGED =
+            "org.codeaurora.intent.action.RADIO_POWER_STATE";
 
     // Legacy intent extra keys, copied from PhoneConstants.
     // Used in legacy intents sent here, for backward compatibility.
@@ -4378,6 +4381,22 @@ public class TelephonyRegistry extends ITelephonyRegistry.Stub {
                 .sendBroadcastMultiplePermissions(intent,
                         new String[] { Manifest.permission.READ_PRIVILEGED_PHONE_STATE },
                         new String[] { Manifest.permission.READ_PHONE_STATE });
+    }
+
+    /**
+     * Sends the Qualcomm compatibility broadcast consumed by Nothing's telephony services.
+     */
+    private void broadcastRadioPowerStateChanged(@RadioPowerState int state, int phoneId,
+            int subId) {
+        Intent intent = new Intent(ACTION_RADIO_POWER_STATE_CHANGED);
+        intent.addFlags(Intent.FLAG_RECEIVER_INCLUDE_BACKGROUND);
+        intent.putExtra(PHONE_CONSTANTS_SUBSCRIPTION_KEY, subId);
+        intent.putExtra(SubscriptionManager.EXTRA_SUBSCRIPTION_INDEX, subId);
+        intent.putExtra(PHONE_CONSTANTS_SLOT_KEY, phoneId);
+        intent.putExtra(SubscriptionManager.EXTRA_SLOT_INDEX, phoneId);
+        intent.putExtra(PHONE_CONSTANTS_STATE_KEY, state);
+        mContext.sendBroadcastAsUser(intent, UserHandle.ALL,
+                Manifest.permission.READ_PRIVILEGED_PHONE_STATE);
     }
 
     /**
