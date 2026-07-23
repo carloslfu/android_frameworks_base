@@ -687,4 +687,16 @@ public class PermissionManagerServiceTracingDecorator implements PermissionManag
             Trace.traceEnd(TRACE_TAG);
         }
     }
+
+    @Override
+    public void updatePermissions(@NonNull PackageState packageState, int userId) {
+        Trace.traceBegin(
+                TRACE_TAG,
+                "TaggedTracingPermissionManagerServiceImpl#updatePermissions");
+        try {
+            mService.updatePermissions(packageState, userId);
+        } finally {
+            Trace.traceEnd(TRACE_TAG);
+        }
+    }
 }
