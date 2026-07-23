@@ -90,6 +90,7 @@ import android.content.pm.DataLoaderType;
 import android.content.pm.FallbackCategoryProvider;
 import android.content.pm.FeatureInfo;
 import android.content.pm.Flags;
+import android.content.pm.GosPackageState;
 import android.content.pm.IDexModuleRegisterCallback;
 import android.content.pm.IOnChecksumsReadyListener;
 import android.content.pm.IPackageDataObserver;
@@ -4398,6 +4399,7 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
         if (dexUseManager != null) {
             dexUseManager.systemReady();
         }
+        GosPackageStatePmHooks.init(this);
     }
 
     public PackageFreezer freezePackage(String packageName, @CanBeALL @UserIdInt int userId,
@@ -4831,6 +4833,10 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
             mHandler.post(new Runnable() {
                 public void run() {
                     mHandler.removeCallbacks(this);
+
+                    GosPackageStatePmHooks.onClearApplicationUserData(
+                            PackageManagerService.this, packageName, userId);
+
                     final boolean succeeded;
                     try (PackageFreezer freezer = freezePackage(packageName, USER_ALL,
                             "clearApplicationUserData",
@@ -6729,6 +6735,27 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
                     getPerUidReadTimeouts(snapshot), mSnapshotStatistics
             ).doDump(snapshot, fd, pw, args);
         }
+        @Nullable
+        @Override
+        public Bundle getExtraAppBindArgs(String packageName) {
+            return PackageManagerHooks.getExtraAppBindArgs(PackageManagerService.this, packageName);
+        }
+
+        @Override
+        public GosPackageState getGosPackageState(@NonNull String packageName, int userId) {
+            int callingUid = Binder.getCallingUid();
+            int callingPid = Binder.getCallingPid();
+            return GosPackageStatePmHooks.getFiltered(PackageManagerService.this, callingUid, callingPid, packageName, userId);
+        }
+
+        @Override
+        public boolean setGosPackageState(@NonNull String packageName, int userId,
+                                                  @NonNull GosPackageState updatedPs, int editorFlags) {
+            int callingUid = Binder.getCallingUid();
+            int callingPid = Binder.getCallingPid();
+            return GosPackageStatePmHooks.set(PackageManagerService.this, callingUid, callingPid, packageName, userId,
+                    updatedPs, editorFlags);
+        }
     }
 
     private class PackageManagerInternalImpl extends PackageManagerInternalBase {
@@ -7311,6 +7338,11 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
         public boolean isUpgradingFromLowerThan(int sdkVersion) {
             final boolean isUpgrading = mPriorSdkVersion != -1;
             return isUpgrading && mPriorSdkVersion < sdkVersion;
+        }
+        @NonNull
+        @Override
+        public GosPackageState getGosPackageState(String packageName, int userId) {
+            return GosPackageStatePmHooks.getUnfiltered(PackageManagerService.this, packageName, userId);
         }
     }
 

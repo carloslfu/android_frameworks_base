@@ -871,4 +871,9 @@ interface IPackageManager {
     String getPageSizeCompatWarningMessage(in String packageName);
 
     List<String> getAllApexDirectories();
+    @nullable Bundle getExtraAppBindArgs(String packageName);
+
+    android.content.pm.GosPackageState getGosPackageState(String packageName, int userId);
+
+    boolean setGosPackageState(String packageName, int userId, in android.content.pm.GosPackageState updatedPs, int editorFlags);
 }
