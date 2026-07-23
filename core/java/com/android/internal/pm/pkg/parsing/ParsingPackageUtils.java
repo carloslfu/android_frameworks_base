@@ -1091,7 +1091,14 @@ public class ParsingPackageUtils {
         if (extraUsesPerms != null) {
             for (ParsedUsesPermission p : extraUsesPerms) {
                 String name = p.getName();
-                if (pkg.getUsesPermissionMapping().containsKey(name)) {
+                boolean duplicate = false;
+                for (ParsedUsesPermission existing : pkg.getUsesPermissions()) {
+                    if (name.equals(existing.getName())) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if (duplicate) {
                     Slog.w(TAG, "PackageParsingHooks.addUsesPermissions() " +
                             "tried to add duplicate uses-permission " + name
                             + " to pkg " + pkg.getPackageName());

@@ -11,7 +11,6 @@ import com.android.internal.pm.pkg.component.ParsedUsesPermission;
 import com.android.internal.pm.pkg.component.ParsedUsesPermissionImpl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PackageParsingHooks {
@@ -38,7 +37,7 @@ public class PackageParsingHooks {
         int l = perms.length;
         var res = new ArrayList<ParsedUsesPermissionImpl>(l);
         for (int i = 0; i < l; ++i) {
-            res.add(new ParsedUsesPermissionImpl(perms[i], 0, Collections.emptySet()));
+            res.add(new ParsedUsesPermissionImpl(perms[i], 0));
         }
         return res;
     }
