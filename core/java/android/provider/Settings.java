@@ -13393,7 +13393,19 @@ public final class Settings {
      * explicitly modify through the system UI or specialized APIs for those values.
      */
     public static final class Global extends NameValueTable {
-        // NOTE: If you add new settings here, be sure to add them to
+         // It's important to define setting names here, since readability of settings is determined
+        // by using Java reflection on members of this class.
+        /** @see android.provider.Settings#getPublicSettingsForClass */
+        // ExtSettings BEGIN
+
+        /** @hide */
+        @Protected(restrictReads = false, readWrite = KnownSystemPackage.SETTINGS)
+        public static final String ALLOW_DISABLING_HARDENING_VIA_APP_COMPAT_CONFIG =
+                "allow_automatic_pkg_hardening_config"; // historical name
+
+         // ExtSettings END
+
+         // NOTE: If you add new settings here, be sure to add them to
         // com.android.providers.settings.SettingsProtoDumpUtil#dumpProtoGlobalSettingsLocked.
 
         /**

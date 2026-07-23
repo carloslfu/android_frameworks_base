@@ -4034,6 +4034,7 @@ package android.content.om {
 package android.content.pm {
 
   public class ApplicationInfo extends android.content.pm.PackageItemInfo implements android.os.Parcelable {
+    method @NonNull public android.ext.AppInfoExt ext();
     method @RequiresPermission(android.Manifest.permission.DELETE_PACKAGES) public boolean hasFragileUserData();
     method public boolean isEncryptionAware();
     method public boolean isInstantApp();
@@ -4812,6 +4813,143 @@ package android.debug {
   public class AdbManager {
     method @RequiresPermission(android.Manifest.permission.MANAGE_DEBUGGING) public boolean isAdbWifiQrSupported();
     method @RequiresPermission(android.Manifest.permission.MANAGE_DEBUGGING) public boolean isAdbWifiSupported();
+  }
+
+}
+
+package android.ext {
+
+  public final class AppInfoExt implements android.os.Parcelable {
+    ctor public AppInfoExt(int, int, long);
+    method public int describeContents();
+    method public static int getInitialPackageId();
+    method public int getPackageId();
+    method public boolean hasCompatChange(int);
+    method public boolean hasCompatConfig();
+    method public boolean hasFlag(int);
+    method public void writeToParcel(@NonNull android.os.Parcel, int);
+    field @NonNull public static final android.os.Parcelable.Creator<android.ext.AppInfoExt> CREATOR;
+  }
+
+  public interface AppInfoExtFlag {
+    field public static final int HAS_GMSCORE_CLIENT_LIBRARY = 0; // 0x0
+  }
+
+  public interface KnownSystemPackage {
+    field public static final int SETTINGS = 0; // 0x0
+    field public static final int SETUP_WIZARD = 3; // 0x3
+    field public static final int SHELL = 1; // 0x1
+    field public static final int SYSTEM_UI = 2; // 0x2
+  }
+
+  public final class KnownSystemPackages {
+    method @NonNull public static android.ext.KnownSystemPackages get(@NonNull android.content.Context);
+    method @NonNull public String getById(int);
+    field @NonNull public final String contactsProvider;
+    field @NonNull public final String launcher;
+    field @NonNull public final String mediaProvider;
+    field @NonNull public final String permissionController;
+    field @NonNull public final String settings;
+    field @NonNull public final String setupWizard;
+    field @NonNull public final String shell;
+    field @NonNull public final String systemUi;
+  }
+
+  public interface PackageId {
+    field public static final int ANDROID_AUTO = 10; // 0xa
+    field public static final String ANDROID_AUTO_NAME = "com.google.android.projection.gearhead";
+    field public static final int EUICC_SUPPORT_PIXEL = 5; // 0x5
+    field public static final String EUICC_SUPPORT_PIXEL_NAME = "com.google.euiccpixel";
+    field public static final int GMS_CORE = 2; // 0x2
+    field public static final String GMS_CORE_NAME = "com.google.android.gms";
+    field public static final String GSF_NAME = "com.google.android.gsf";
+    field public static final int G_CAMERA = 8; // 0x8
+    field public static final String G_CAMERA_NAME = "com.google.android.GoogleCamera";
+    field public static final int G_CARRIER_SETTINGS = 7; // 0x7
+    field public static final String G_CARRIER_SETTINGS_NAME = "com.google.android.carrier";
+    field public static final int G_EUICC_LPA = 6; // 0x6
+    field public static final String G_EUICC_LPA_NAME = "com.google.android.euicc";
+    field public static final int G_SEARCH_APP = 4; // 0x4
+    field public static final String G_SEARCH_APP_NAME = "com.google.android.googlequicksearchbox";
+    field public static final int PIXEL_CAMERA_SERVICES = 9; // 0x9
+    field public static final String PIXEL_CAMERA_SERVICES_NAME = "com.google.android.apps.camera.services";
+    field public static final int PIXEL_HEALTH = 13; // 0xd
+    field public static final String PIXEL_HEALTH_NAME = "com.google.android.apps.pixel.health";
+    field public static final int PLAY_STORE = 3; // 0x3
+    field public static final String PLAY_STORE_NAME = "com.android.vending";
+    field public static final int TYCHO = 11; // 0xb
+    field public static final String TYCHO_NAME = "com.google.android.apps.tycho";
+    field public static final int UNKNOWN = 0; // 0x0
+  }
+
+}
+
+package android.ext.settings {
+
+  public class BoolSetting extends android.ext.settings.Setting<android.ext.settings.BoolSetting> {
+    ctor public BoolSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, boolean);
+    ctor public BoolSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, @NonNull java.util.function.Function<android.content.Context,java.lang.Boolean>);
+    method public final boolean get(@NonNull android.content.Context);
+    method public final boolean get(@NonNull android.content.Context, int);
+    method public final boolean put(@NonNull android.content.Context, boolean);
+  }
+
+  public class BoolSysProperty extends android.ext.settings.BoolSetting {
+    ctor public BoolSysProperty(@NonNull String, boolean);
+    ctor public BoolSysProperty(@NonNull String, @NonNull java.util.function.Function<android.content.Context,java.lang.Boolean>);
+    method public boolean get();
+    method public boolean put(boolean);
+  }
+
+  public class IntSetting extends android.ext.settings.Setting<android.ext.settings.IntSetting> {
+    ctor public IntSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, int);
+    ctor public IntSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, int, @NonNull int...);
+    ctor public IntSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, @NonNull java.util.function.ToIntFunction<android.content.Context>);
+    ctor public IntSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, @NonNull java.util.function.ToIntFunction<android.content.Context>, @NonNull int...);
+    method public final int get(@NonNull android.content.Context);
+    method public final int get(@NonNull android.content.Context, int);
+    method public final boolean put(@NonNull android.content.Context, int);
+    method public boolean validateValue(int);
+  }
+
+  public class IntSysProperty extends android.ext.settings.IntSetting {
+    ctor public IntSysProperty(@NonNull String, int);
+    ctor public IntSysProperty(@NonNull String, int, @NonNull int...);
+    ctor public IntSysProperty(@NonNull String, @NonNull java.util.function.ToIntFunction<android.content.Context>);
+    ctor public IntSysProperty(@NonNull String, @NonNull java.util.function.ToIntFunction<android.content.Context>, @NonNull int...);
+    method public int get();
+    method public boolean put(int);
+  }
+
+  public abstract class Setting<SelfType extends android.ext.settings.Setting> {
+    method public final boolean canObserveState();
+    method @NonNull public final String getKey();
+    method @NonNull public final android.ext.settings.Setting.Scope getScope();
+    method @NonNull public final Object registerObserver(@NonNull android.content.Context, @NonNull android.os.Handler, @NonNull java.util.function.Consumer<SelfType>);
+    method @NonNull public final Object registerObserver(@NonNull android.content.Context, int, @NonNull android.os.Handler, @NonNull java.util.function.Consumer<SelfType>);
+    method public final void unregisterObserver(@NonNull android.content.Context, @NonNull Object);
+  }
+
+  public enum Setting.Scope {
+    enum_constant public static final android.ext.settings.Setting.Scope GLOBAL;
+    enum_constant public static final android.ext.settings.Setting.Scope PER_USER;
+    enum_constant public static final android.ext.settings.Setting.Scope SYSTEM_PROPERTY;
+  }
+
+  public class StringSetting extends android.ext.settings.Setting<android.ext.settings.StringSetting> {
+    ctor public StringSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, @NonNull String);
+    ctor public StringSetting(@NonNull android.ext.settings.Setting.Scope, @NonNull String, @NonNull java.util.function.Function<android.content.Context,java.lang.String>);
+    method @NonNull public final String get(@NonNull android.content.Context);
+    method @NonNull public final String get(@NonNull android.content.Context, int);
+    method public final boolean put(@NonNull android.content.Context, @NonNull String);
+    method public boolean validateValue(@NonNull String);
+  }
+
+  public class StringSysProperty extends android.ext.settings.StringSetting {
+    ctor public StringSysProperty(@NonNull String, @NonNull String);
+    ctor public StringSysProperty(@NonNull String, @NonNull java.util.function.Function<android.content.Context,java.lang.String>);
+    method @NonNull public String get();
+    method public boolean put(@NonNull String);
   }
 
 }
@@ -19615,4 +19753,3 @@ package android.window {
   }
 
 }
-
