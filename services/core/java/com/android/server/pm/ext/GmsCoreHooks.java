@@ -6,6 +6,7 @@ import android.content.pm.GosPackageState;
 import android.content.pm.PackageManagerInternal;
 import android.content.pm.ServiceInfo;
 import android.ext.PackageId;
+import android.os.Build;
 import android.os.SystemProperties;
 import android.service.credentials.CredentialProviderService;
 
@@ -26,7 +27,7 @@ class GmsCoreHooks extends PackageHooks {
 
     @Override
     public int overridePermissionState(String permission, int userId) {
-        if (android.os.Flags.isDevBuild()) {
+        if (Build.isDebuggable()) {
             if (SystemProperties.getBoolean("sys.gmscore_grant." + permission, false)) {
                 return PERMISSION_OVERRIDE_GRANT;
             }
