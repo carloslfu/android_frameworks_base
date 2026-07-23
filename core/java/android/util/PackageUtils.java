@@ -19,6 +19,7 @@ package android.util;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.pm.Signature;
 import android.text.TextUtils;
 
@@ -245,5 +246,10 @@ public final class PackageUtils {
             pieces[index] = HexEncoding.encodeToString(resultBytes[index], true);
         }
         return TextUtils.join(separator, pieces);
+    }
+
+    public static String getFirstPartyAppSourcePackageName(Context context) {
+        return context.getString(
+                com.android.internal.R.string.config_first_party_app_source_package_name);
     }
 }
