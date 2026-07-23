@@ -1910,7 +1910,6 @@ public final class SystemServiceRegistry {
         }
     }
 
-    @RavenwoodKeep
     private static ServiceFetcher<?> getSystemServiceFetcher(String name) {
         if (name == null) {
             return null;
