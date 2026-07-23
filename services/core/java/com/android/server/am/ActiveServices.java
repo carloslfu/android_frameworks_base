@@ -8911,6 +8911,12 @@ public final class ActiveServices {
             }
         }
 
+        if (ret == REASON_DENIED) {
+            if (ActiveServicesHooks.shouldAllowFgsWhileInUsePermission(this, callingUid)) {
+                ret = REASON_ALLOWLISTED_PACKAGE;
+            }
+        }
+
         return ret;
     }
 

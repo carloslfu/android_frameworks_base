@@ -88,6 +88,8 @@ import com.android.server.pm.PackageInstallerService
 import com.android.server.pm.PackageManagerLocal
 import com.android.server.pm.UserManagerInternal
 import com.android.server.pm.UserManagerService
+import com.android.server.pm.ext.PackageExt
+import com.android.server.pm.ext.PackageHooks
 import com.android.server.pm.permission.LegacyPermission
 import com.android.server.pm.permission.LegacyPermissionSettings
 import com.android.server.pm.permission.LegacyPermissionState
@@ -869,6 +871,18 @@ class PermissionService(private val service: AccessCheckingService) :
             context.checkCallingOrSelfPermission(
                 Manifest.permission.ADJUST_RUNTIME_PERMISSIONS_POLICY
             ) == PackageManager.PERMISSION_GRANTED
+
+        if (
+            !isGranted &&
+                PackageExt.get(androidPackage)
+                        .hooks()
+                        .overridePermissionState(permissionName, userId) ==
+                    PackageHooks.PERMISSION_OVERRIDE_GRANT
+        ) {
+            throw IllegalArgumentException(
+                "$permissionName is granted by PackageHooks for $packageName"
+            )
+        }
 
         service.mutateState {
             with(onPermissionFlagsChangedListener) {
