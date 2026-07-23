@@ -22,8 +22,6 @@ import com.android.server.pm.ext.PackageHooks;
 import com.android.server.pm.permission.Permission;
 import com.android.server.pm.pkg.AndroidPackage;
 import com.android.server.pm.pkg.PackageStateInternal;
-import com.android.server.pm.pkg.parsing.ParsingPackage;
-
 import static java.util.Objects.requireNonNull;
 
 public class PackageManagerHooks {
