@@ -110,7 +110,7 @@ public class GmcDebug {
         appendIntent(intent, b);
         if (options != null) {
             b.append(", options: ");
-            b.append(options.toStringDeep());
+            b.append(options);
         }
         if (brOptions != null) {
             b.append(", brOptions: ");
@@ -138,7 +138,7 @@ public class GmcDebug {
         }
         if (initialExtras != null) {
             b.append(", initialExtras: ");
-            b.append(initialExtras.toStringDeep());
+            b.append(initialExtras);
         }
         Log.v(LOG_TAG, b.toString(), new Throwable());
     }
@@ -161,7 +161,7 @@ public class GmcDebug {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             b.append(", extras: ");
-            b.append(extras.toStringDeep());
+            b.append(extras);
         }
     }
 }

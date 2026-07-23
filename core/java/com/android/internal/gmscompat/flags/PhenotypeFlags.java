@@ -47,7 +47,7 @@ public class PhenotypeFlags {
             intent.putExtra("values", flagValues);
             intent.putExtra("types", flagTypes);
             Log.d(TAG, "sending FLAG_OVERRIDE broadcast for flagPackage " + flagPackageName
-                    + ", extras: " + intent.getExtras().toStringDeep());
+                    + ", extras: " + intent.getExtras());
             GmsCompat.appContext().sendBroadcast(intent);
         }
     }

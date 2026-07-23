@@ -27,7 +27,7 @@ public class GservicesFlags {
             var intent = new Intent("com.google.gservices.intent.action.GSERVICES_OVERRIDE");
             intent.setPackage(PackageId.GMS_CORE_NAME);
             overriddenFlags.forEach(intent::putExtra);
-            Log.d(TAG, "sending GSERVICES_OVERRIDE broadcast, extras: " + intent.getExtras().toStringDeep());
+            Log.d(TAG, "sending GSERVICES_OVERRIDE broadcast, extras: " + intent.getExtras());
             GmsCompat.appContext().sendBroadcast(intent);
         }
     }
