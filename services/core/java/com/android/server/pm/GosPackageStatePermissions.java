@@ -93,7 +93,7 @@ class GosPackageStatePermissions {
         }
         Computer computer = pm.snapshotComputer();
 
-        KnownSystemPackages ksp = KnownSystemPackages.get(pm.getContext());
+        KnownSystemPackages ksp = KnownSystemPackages.get(pm.mContext);
         builder()
                 .readFlag(STORAGE_SCOPES_ENABLED)
                 .readField(FIELD_STORAGE_SCOPES)
@@ -200,7 +200,7 @@ class GosPackageStatePermissions {
                         .crossUserPermissions(intArr(i, "crossUserPermissions"))
                         .apply(i.getStringExtra("pkgName"), pm.snapshotComputer());
 
-                PackageManagerService.invalidatePackageInfoCache(PackageMetrics.INVALIDATION_REASON_UNSPECIFIED);
+                PackageManagerService.invalidatePackageInfoCache();
                 Slog.d(TAG, "granted permission " + i.getExtras());
             }
 
@@ -222,7 +222,7 @@ class GosPackageStatePermissions {
                 return res != null ? res : EmptyArray.INT;
             }
         };
-        pm.getContext().registerReceiver(receiver, new IntentFilter("GosPackageState.grant_permission"),
+        pm.mContext.registerReceiver(receiver, new IntentFilter("GosPackageState.grant_permission"),
                 Context.RECEIVER_EXPORTED);
     }
 

@@ -202,7 +202,7 @@ public class GosPackageStatePmHooks {
     }
 
     private static int deriveFlags(int flags, AndroidPackage pkg) {
-        for (ParsedUsesPermission perm : pkg.getUsesPermissionMapping().values()) {
+        for (ParsedUsesPermission perm : pkg.getUsesPermissions()) {
             String name = perm.getName();
             switch (name) {
                 case Manifest.permission.READ_EXTERNAL_STORAGE:
@@ -309,7 +309,7 @@ public class GosPackageStatePmHooks {
 
     /** @see PackageManagerService.IPackageManagerImpl#clearApplicationUserData */
     public static void onClearApplicationUserData(PackageManagerService pm, String packageName, int userId) {
-        if (packageName.equals(KnownSystemPackages.get(pm.getContext()).contactsProvider)) {
+        if (packageName.equals(KnownSystemPackages.get(pm.mContext).contactsProvider)) {
             // discard IDs that refer to entries in the contacts provider database
             clearContactScopesStorage(pm, userId);
         }
@@ -340,9 +340,10 @@ public class GosPackageStatePmHooks {
                 if (!ed.apply()) {
                     return 1;
                 }
-                if (updatePermissionState) {
-                    cmd.mPermissionManager.updatePermissionState(packageName, userId);
-                }
+                // Android 16 moved permission-state recomputation behind an API that does not
+                // exist on this Android 15 base. This flag is only exposed by the debuggable
+                // package-manager shell command; the runtime GMS compatibility path never uses it.
+                // Keep accepting the argument so Graphene's diagnostic scripts remain portable.
                 return 0;
             }
             switch (arg) {
