@@ -100,7 +100,8 @@ public class GmcUserManager extends UserManager {
     }
 
     @Override
-    public List<UserInfo> getUsers(boolean excludeDying) {
+    public List<UserInfo> getUsers(boolean excludePartial, boolean excludeDying,
+            boolean excludePreCreated) {
         return Collections.singletonList(getUserInfo());
     }
 
