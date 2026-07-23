@@ -21,6 +21,7 @@ import static android.app.NotificationChannel.DEFAULT_CHANNEL_ID;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.service.notification.Flags.notificationClassification;
 
+import android.Manifest;
 import android.annotation.CallbackExecutor;
 import android.annotation.FlaggedApi;
 import android.annotation.IntDef;
@@ -36,6 +37,7 @@ import android.annotation.UserHandleAware;
 import android.annotation.WorkerThread;
 import android.app.Notification.Builder;
 import android.app.compat.CompatChanges;
+import android.app.compat.gms.GmsCompat;
 import android.compat.annotation.ChangeId;
 import android.compat.annotation.EnabledSince;
 import android.compat.annotation.UnsupportedAppUsage;
@@ -45,6 +47,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ParceledListSlice;
 import android.content.pm.ShortcutInfo;
+import android.ext.PackageId;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Binder;
@@ -76,6 +79,7 @@ import android.util.Slog;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.annotations.VisibleForTesting;
+import com.android.internal.gmscompat.GmsCompatApp;
 import com.android.internal.notification.NotificationChannelGroupsHelper;
 
 import java.lang.annotation.Retention;
@@ -797,6 +801,17 @@ public class NotificationManager {
     public void notifyAsUser(@Nullable String tag, int id, Notification notification,
             UserHandle user)
     {
+        if (GmsCompat.isEnabled()) {
+            if (!GmsCompat.hasPermission(Manifest.permission.POST_NOTIFICATIONS)) {
+                String pkg = GmsCompat.appContext().getPackageName();
+                try {
+                    GmsCompatApp.iGms2Gca().showMissingPostNotifsPermissionNotification(pkg);
+                } catch (RemoteException e) {
+                    GmsCompatApp.callFailed(e);
+                }
+            }
+        }
+
         INotificationManager service = service();
         String pkg = mContext.getPackageName();
         if (discardNotify(user, pkg, tag, id, notification)) {
@@ -2129,6 +2144,12 @@ public class NotificationManager {
      * {@link android.provider.Settings#ACTION_NOTIFICATION_LISTENER_SETTINGS}.
      */
     public boolean isNotificationListenerAccessGranted(ComponentName listener) {
+        if (GmsCompat.isAndroidAuto()) {
+            if (PackageId.ANDROID_AUTO_NAME.equals(listener.getPackageName())) {
+                return true;
+            }
+        }
+
         INotificationManager service = service();
         try {
             return service.isNotificationListenerAccessGranted(listener);
