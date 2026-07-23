@@ -3926,6 +3926,14 @@ public class PermissionManagerServiceImpl implements PermissionManagerServiceInt
                 packageName, pkg, getVolumeUuidForPackage(pkg), flags, mDefaultPermissionCallback);
     }
 
+    @Override
+    public void updatePermissions(@NonNull PackageState packageState, int userId) {
+        final AndroidPackage pkg = packageState.getAndroidPackage();
+        if (pkg != null) {
+            updatePermissions(pkg.getPackageName(), pkg);
+        }
+    }
+
     /**
      * Update all permissions for all apps.
      *

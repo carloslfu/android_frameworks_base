@@ -2943,4 +2943,12 @@ class PermissionService(private val service: AccessCheckingService) :
         fun getFullerPermission(permissionName: String): String? =
             FULLER_PERMISSIONS[permissionName]
     }
+
+    override fun updatePermissions(pkgState: PackageState, userId: Int) {
+        service.mutateState {
+            with(policy) {
+                evaluateAllPermissionStatesForPackageAndUser(pkgState, userId, null)
+            }
+        }
+    }
 }
