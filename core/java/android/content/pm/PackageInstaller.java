@@ -2914,7 +2914,6 @@ public class PackageInstaller {
             dexoptCompilerFilter = source.readString();
             isAutoInstallDependenciesEnabled = source.readBoolean();
             maxAllowedVersion = source.readLong();
-            extensionParams = source.readPersistableBundle();
         }
 
         /** {@hide} */
@@ -2953,7 +2952,6 @@ public class PackageInstaller {
             ret.dexoptCompilerFilter = dexoptCompilerFilter;
             ret.isAutoInstallDependenciesEnabled = isAutoInstallDependenciesEnabled;
             ret.maxAllowedVersion = maxAllowedVersion;
-            ret.extensionParams = extensionParams;
             return ret;
         }
 
@@ -3764,7 +3762,6 @@ public class PackageInstaller {
             dest.writeString(dexoptCompilerFilter);
             dest.writeBoolean(isAutoInstallDependenciesEnabled);
             dest.writeLong(maxAllowedVersion);
-            dest.writePersistableBundle(extensionParams);
         }
 
         public static final Parcelable.Creator<SessionParams>
