@@ -644,14 +644,7 @@ public class ParsingPackageUtils {
 
             pkg.setVolumeUuid(volumeUuid);
 
-            PackageExtInitIface pkgExtInit = null;
-            PackageExtInitSupplier pkgExtInitSupplier = packageExtInitSupplier;
-            if (pkgExtInitSupplier != null) {
-                pkgExtInit = pkgExtInitSupplier.invoke(input, pkg, (flags & PARSE_IS_SYSTEM_DIR) != 0);
-                if (pkgExtInit != null) {
-                    pkgExtInit.run();
-                }
-            }
+            PackageExtInitIface pkgExtInit = initPackageExt(input, pkg, flags);
 
             if ((flags & PARSE_COLLECT_CERTIFICATES) != 0) {
                 // skip reparsing certificates if they were already parsed by PackageExtInit
@@ -681,6 +674,29 @@ public class ParsingPackageUtils {
 
     @Nullable
     public static PackageExtInitSupplier packageExtInitSupplier;
+
+    /**
+     * Initializes package extensions after either a full parse or a package-cache read.
+     *
+     * PackageImpl deliberately keeps server-only extensions out of its core Parcelable form.
+     * Callers that restore a cached PackageImpl must therefore run this initializer again before
+     * they expose the parsed package.
+     */
+    @Nullable
+    public static PackageExtInitIface initPackageExt(
+            ParseInput input, ParsingPackage pkg, int flags) {
+        PackageExtInitSupplier supplier = packageExtInitSupplier;
+        if (supplier == null) {
+            return null;
+        }
+
+        PackageExtInitIface initializer =
+                supplier.invoke(input, pkg, (flags & PARSE_IS_SYSTEM_DIR) != 0);
+        if (initializer != null) {
+            initializer.run();
+        }
+        return initializer;
+    }
 
     public interface PackageExtInitIface {
         void run();

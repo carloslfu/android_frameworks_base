@@ -125,6 +125,10 @@ public class PackageParser2 implements AutoCloseable {
         if (useCaches && mCacher != null) {
             ParsedPackage parsed = mCacher.getCachedResult(packageFile, flags);
             if (parsed != null) {
+                PackageImpl cachedPackage = (PackageImpl) parsed;
+                cachedPackage.initPackageParsingHooks();
+                ParsingPackageUtils.initPackageExt(
+                        mSharedResult.get().reset(), cachedPackage, flags);
                 return parsed;
             }
         }

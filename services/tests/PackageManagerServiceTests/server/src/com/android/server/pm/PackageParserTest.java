@@ -62,6 +62,7 @@ import android.content.pm.PackageManager.Property;
 import android.content.pm.ServiceInfo;
 import android.content.pm.Signature;
 import android.content.pm.SigningDetails;
+import android.content.pm.parsing.result.ParseResult;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -139,6 +140,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Presubmit
 @RunWith(AndroidJUnit4.class)
@@ -218,6 +220,38 @@ public class PackageParserTest {
 
         pkg = pp.parsePackage(FRAMEWORK, 0 /* parseFlags */, false /* useCaches */);
         assertEquals("android", pkg.getPackageName());
+    }
+
+    @Test
+    public void testParse_withCache_reinitializesPackageExtensions() throws Exception {
+        final ParsingPackageUtils.PackageExtInitSupplier oldSupplier =
+                ParsingPackageUtils.packageExtInitSupplier;
+        final AtomicInteger initializationCount = new AtomicInteger();
+
+        ParsingPackageUtils.packageExtInitSupplier = (input, pkg, isSystem) ->
+                new ParsingPackageUtils.PackageExtInitIface() {
+                    @Override
+                    public void run() {
+                        initializationCount.incrementAndGet();
+                    }
+
+                    @Override
+                    public ParseResult<SigningDetails> getSigningDetailsParseResult() {
+                        return null;
+                    }
+                };
+
+        try (CachePackageNameParser parser = new CachePackageNameParser(mTmpDir)) {
+            parser.parsePackage(FRAMEWORK, 0 /* parseFlags */, true /* useCaches */);
+            assertEquals(1, initializationCount.get());
+
+            ParsedPackage cached = parser.parsePackage(
+                    FRAMEWORK, 0 /* parseFlags */, true /* useCaches */);
+            assertEquals("cache_android", cached.getPackageName());
+            assertEquals(2, initializationCount.get());
+        } finally {
+            ParsingPackageUtils.packageExtInitSupplier = oldSupplier;
+        }
     }
 
     @Test
@@ -1376,4 +1410,3 @@ public class PackageParserTest {
         }
     }
 }
-
